@@ -16,7 +16,7 @@ const {
 
 function addHook (hook) {
   importHooks.push(hook)
-  toHook.forEach(([name, namespace, specifier]) => hook(name, namespace, specifier))
+  toHook.forEach(([name, namespace]) => hook(name, namespace))
 }
 
 function removeHook (hook) {
@@ -118,7 +118,7 @@ function Hook (modules, options, hookFn) {
     sendModulesToLoader(modules)
   }
 
-  this._iitmHook = (name, namespace, specifier) => {
+  this._iitmHook = (name, namespace) => {
     const filename = name
     const isBuiltin = name.startsWith('node:')
     let baseDir
@@ -140,9 +140,7 @@ function Hook (modules, options, hookFn) {
 
     if (modules) {
       for (const moduleName of modules) {
-        if (moduleName === specifier) {
-          callHookFn(hookFn, namespace, name, baseDir)
-        } else if (moduleName === name) {
+        if (moduleName === name) {
           if (baseDir) {
             if (internals) {
               name = name + path.sep + path.relative(baseDir, fileURLToPath(filename))
